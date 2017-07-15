@@ -1,5 +1,6 @@
 class Hangman
   MAX_WRONG_GUESSES = 8
+  BODY_PARTS = ["\\", "/", "|", "-", "-", "|", "|", "O"].freeze
 
   attr_reader :guesser, :referee, :board
 
@@ -55,8 +56,20 @@ class Hangman
   end
 
   def display_board
+    puts hanging_man
     display_array = board.map { |el| el.nil? ? "_" : el }
     puts display_array.join(" ")
+  end
+
+  private
+
+  def hanging_man
+    body_display = BODY_PARTS.drop(@remaining_guesses)
+    @remaining_guesses.times { body_display.unshift(" ") }
+    "____\n|  |\n|  #{body_display[7]}\n|  #{body_display[6]}\n"\
+    "| #{body_display[4]}#{body_display[5]}#{body_display[3]}\n"\
+    "|  #{body_display[2]}\n| #{body_display[1]} #{body_display[0]}\n"\
+    "|\n-----"
   end
 end
 
@@ -72,8 +85,8 @@ class HumanPlayer
     puts "The secret word is #{length} letters long."
   end
 
+  # 'board' is added to match the ComputerPlayer guess method
   def guess(board)
-    display_board(board)
     print "Make a guess: "
     gets.chomp
   end
