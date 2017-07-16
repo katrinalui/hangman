@@ -1,6 +1,6 @@
 class Hangman
   MAX_WRONG_GUESSES = 8
-  BODY_PARTS = ["\\", "/", "|", "-", "-", "|", "|", "O"].freeze
+  BODY_PARTS = ["\\", "/", "|", "/", "\\", "|", "|", "O"].freeze
 
   attr_reader :guesser, :referee, :board
 
@@ -57,15 +57,18 @@ class Hangman
 
   def display_board
     puts hanging_man
-    display_array = board.map { |el| el.nil? ? "_" : el }
-    puts display_array.join(" ")
+
+    word_board = board.map { |el| el.nil? ? "_" : el }
+    puts word_board.join(" ")
   end
 
   private
 
   def hanging_man
-    body_display = BODY_PARTS.drop(@remaining_guesses)
-    @remaining_guesses.times { body_display.unshift(" ") }
+    body_display = BODY_PARTS.map.with_index do |part, i|
+      i < @remaining_guesses ? " " : part
+    end
+
     "____\n|  |\n|  #{body_display[7]}\n|  #{body_display[6]}\n"\
     "| #{body_display[4]}#{body_display[5]}#{body_display[3]}\n"\
     "|  #{body_display[2]}\n| #{body_display[1]} #{body_display[0]}\n"\
@@ -74,8 +77,6 @@ class Hangman
 end
 
 class HumanPlayer
-  attr_reader :secret_word
-
   def pick_secret_word
     print "Please enter the length of your secret word: "
     gets.chomp.to_i
